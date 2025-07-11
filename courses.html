@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses - Telugu Forex Community</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+      .hidden { display: none; }
+      .auth-form { max-width: 350px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);}
+      .auth-form input { width: 100%; margin-bottom: 1rem; padding: 0.7rem; border: 1px solid #ccc; border-radius: 4px;}
+      .auth-form button { background: #2563eb; color: #fff; border: none; padding: 0.7rem 1.5rem; border-radius: 4px; cursor: pointer; }
+      .auth-form button:hover { background: #1e293b; }
+      .auth-message { color: #e63946; margin-bottom: 1rem; }
+      .logout-btn { float: right; background: #e63946; color: #fff; border: none; padding: 0.4rem 1rem; border-radius: 4px; cursor: pointer; }
+      .logout-btn:hover { background: #1e293b; }
+      .courses-headline { text-align: center; margin-top: 2rem; margin-bottom: 1.5rem; font-size: 2rem; color: #2563eb;}
+      .course-card-list { display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; }
+      .course-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        padding: 1.2rem;
+        width: 330px;
+        text-align: center;
+        margin-bottom: 2rem;
+        transition: box-shadow .2s;
+      }
+      .course-card:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.14);
+      }
+      .course-thumbnail {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        border: 1px solid #eee;
+      }
+      .course-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.7rem;
+      }
+      .access-btn {
+        background: #e63946;
+        color: #fff;
+        padding: 0.6rem 1.3rem;
+        border: none;
+        border-radius: 4px;
+        font-size: 1rem;
+        font-weight: bold;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 0.7rem;
+        transition: background .2s;
+      }
+      .access-btn:hover {
+        background: #2563eb;
+      }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Telugu Forex Community</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html#home">Home</a></li>
+                <li><a href="index.html#about">About Us</a></li>
+                <li><a href="index.html#services">Services</a></li>
+                <li><a href="index.html#community">Community</a></li>
+                <li><a href="courses.html">Courses</a></li>
+                <li><a href="index.html#news">Market News</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <!-- Signup/Login Form -->
+        <div id="authSection" class="auth-form">
+            <h2>Sign Up or Login to Access Courses</h2>
+            <div id="authMsg" class="auth-message hidden"></div>
+            <input type="text" id="username" placeholder="Enter Username" required>
+            <input type="password" id="password" placeholder="Enter Password" required>
+            <button id="signupBtn">Sign Up</button>
+            <button id="loginBtn">Login</button>
+        </div>
+        <!-- Logout Button -->
+        <button id="logoutBtn" class="logout-btn hidden">Logout</button>
+        
+        <!-- Courses Content (hidden until login) -->
+        <section id="coursesContent" class="hidden">
+            <div class="courses-headline">ACCESS THE FREE COURSE</div>
+            <div class="course-card-list" id="courseCardList">
+              <!-- Course cards go here -->
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2025 Telugu Forex Community. All Rights Reserved.</p>
+    </footer>
+    <script>
+    // Simple fake auth using LocalStorage
+    function showCourses() {
+        document.getElementById('authSection').classList.add('hidden');
+        document.getElementById('coursesContent').classList.remove('hidden');
+        document.getElementById('logoutBtn').classList.remove('hidden');
+    }
+    function showAuthForm() {
+        document.getElementById('authSection').classList.remove('hidden');
+        document.getElementById('coursesContent').classList.add('hidden');
+        document.getElementById('logoutBtn').classList.add('hidden');
+    }
+    function setAuthMsg(msg) {
+        let el = document.getElementById('authMsg');
+        el.textContent = msg;
+        el.classList.remove('hidden');
+    }
+
+    const signupBtn = document.getElementById('signupBtn');
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    // On page load
+    if(localStorage.getItem('tfcUser')) {
+        showCourses();
+    } else {
+        showAuthForm();
+    }
+
+    signupBtn.onclick = function() {
+        const user = document.getElementById('username').value.trim();
+        const pass = document.getElementById('password').value.trim();
+        if(!user || !pass) {
+            setAuthMsg('Please enter both username and password.');
+            return;
+        }
+        localStorage.setItem('tfcUser', user);
+        showCourses();
+        renderCourses();
+    };
+
+    loginBtn.onclick = function() {
+        const user = document.getElementById('username').value.trim();
+        const pass = document.getElementById('password').value.trim();
+        if(!user || !pass) {
+            setAuthMsg('Please enter both username and password.');
+            return;
+        }
+        if(localStorage.getItem('tfcUser') === user) {
+            showCourses();
+            renderCourses();
+        } else {
+            setAuthMsg('User not found. Please sign up first.');
+        }
+    };
+
+    logoutBtn.onclick = function() {
+        localStorage.removeItem('tfcUser');
+        showAuthForm();
+        document.getElementById('username').value = '';
+        document.getElementById('password').value = '';
+        document.getElementById('authMsg').classList.add('hidden');
+    };
+
+    // Courses data (add more courses here!)
+    const courses = [
+      {
+        title: "ADVANCED CONCPETS BY RAJA BANKS",
+        youtube: "https://www.youtube.com/watch?v=mJ8-idiosc0&list=PLSEKv3cWKWefUi9TMWHLZ6A1nSZIzXYPy"
+      },
+      {
+        title: "CANDEL STICKS BY RAJA BANKS",
+        youtube: "https://www.youtube.com/watch?v=rASPKCmDSxU&list=PLSEKv3cWKWec5WNMXuOSRAztnSb0nqQT8"
+      },
+      {
+        title: "TARDING THE TREND",
+        youtube: "https://www.youtube.com/watch?v=Z9ZzwWSwKTA&list=PLSEKv3cWKWeddapDg9QSle0_EP1oSvxwl"
+      },
+      {
+        title: "MFU CLASSES",
+        youtube: "https://www.youtube.com/watch?v=Z9ZzwWSwKTA&list=PLSEKv3cWKWeddapDg9QSle0_EP1oSvxwl"
+      },
+      {
+        title: "Q&A SIMULATION SESSIONS",
+        youtube: "https://www.youtube.com/watch?v=Au2CdWpFvkQ&list=PLSEKv3cWKWedJ_VTiiDRQzg2jj4SlEGZ7"
+      },
+      {
+        title: "TRADE BREAKDOWN'S BY RAJA BANKS",
+        youtube: "https://www.youtube.com/watch?v=_DpEJuT3uTg&list=PLSEKv3cWKWefPhZmQ6ffHuLWj8gPkaOrS"
+      }
+    ];
+
+    // Utility: Get YouTube Thumbnail URL from video link
+    function getYouTubeThumbnail(url) {
+      // Extract video ID from URL
+      const match = url.match(/v=([^&]+)/);
+      if(match && match[1]) {
+        return `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg`;
+      }
+      // If alternate format (youtu.be/VIDEO_ID)
+      const altMatch = url.match(/youtu\.be\/([^?&]+)/);
+      if(altMatch && altMatch[1]) {
+        return `https://img.youtube.com/vi/${altMatch[1]}/hqdefault.jpg`;
+      }
+      return 'https://img.youtube.com/vi/default/hqdefault.jpg'; // fallback
+    }
+
+    // Render course cards
+    function renderCourses() {
+      const list = document.getElementById('courseCardList');
+      list.innerHTML = '';
+      courses.forEach(course => {
+        const thumb = getYouTubeThumbnail(course.youtube);
+        const card = document.createElement('div');
+        card.className = 'course-card';
+        card.innerHTML = `
+          <img class="course-thumbnail" src="${thumb}" alt="Course Thumbnail">
+          <div class="course-title">${course.title}</div>
+          <a class="access-btn" href="${course.youtube}" target="_blank">Access via YouTube</a>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    // Only render courses if logged in
+    if(localStorage.getItem('tfcUser')) {
+      renderCourses();
+    }
+
+    // Re-render courses after signup/login
+    signupBtn.addEventListener('click', renderCourses);
+    loginBtn.addEventListener('click', renderCourses);
+
+    </script>
+</body>
+</html>
